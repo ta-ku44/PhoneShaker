@@ -1,12 +1,14 @@
 import SwiftUI
+import AVFoundation
 import CoreMotion
 import Combine
 import simd
 
 class MotionManager: ObservableObject {
     private let motionManager = CMMotionManager()
+    private var audioPlayer: AVAudioPlayer?
     
-    @Published var vibVec = SIMD3<Double>(x: 0, y: 0, z: 0) // 振動値
+    @Published var vibVec = SIMD3<Double>(x: 0, y: 0, z: 0)
     
     func startDetecting() {
         guard motionManager.isAccelerometerAvailable else {
@@ -18,14 +20,13 @@ class MotionManager: ObservableObject {
         motionManager.startAccelerometerUpdates(to: .main) { [weak self] data, error in
             guard let self = self, let acceleration = data?.acceleration else { return }
             
-            self.vibVec.x = acceleration.x
-            self.vibVec.y = acceleration.y
-            self.vibVec.z = acceleration.z
+            self.vibVec = SIMD3(x: acceleration.x, y: acceleration.y, z: acceleration.z) // センサーの値を取得
+            
 
-            print("X: \(acceleration.x)")
-            print("Y: \(acceleration.y)")
-            print("Z: \(acceleration.z)")
-            print("---------------------")
+//            print("X: \(acceleration.x)")
+//            print("Y: \(acceleration.y)")
+//            print("Z: \(acceleration.z)")
+//            print("---------------------")
         }
     }
     
@@ -71,6 +72,7 @@ struct ContentView: View {
         .onDisappear {
             motionManager.stopDetecting()
         }
+        
     }
 }
 
