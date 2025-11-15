@@ -1,86 +1,28 @@
 import SwiftUI
-import AVFoundation
 import CoreMotion
 import Combine
 import simd
 
 class MotionManager: ObservableObject {
-    private let motionManager = CMMotionManager()
-    private var audioPlayer: AVAudioPlayer?
+    private let motion = CMMotionManager()
     
-    @Published var vibVec = SIMD3<Double>(x: 0, y: 0, z: 0)
+    @Published var vibVec = SIMD3<Double>(0, 0, 0)
     
     func startDetecting() {
-        guard motionManager.isAccelerometerAvailable else {
+        guard motion.isAccelerometerAvailable else {
             print("加速度センサーが利用できません")
             return
         }
         
-        motionManager.accelerometerUpdateInterval = 0.5
-        motionManager.startAccelerometerUpdates(to: .main) { [weak self] data, error in
-            guard let self = self, let acceleration = data?.acceleration else { return }
+        motion.accelerometerUpdateInterval = 0.1
+        motion.startAccelerometerUpdates(to: .main) { [weak self] data, _ in
+            guard let acc = data?.acceleration else { return }
             
-            self.vibVec = SIMD3(x: acceleration.x, y: acceleration.y, z: acceleration.z) // センサーの値を取得
-            
-
-//            print("X: \(acceleration.x)")
-//            print("Y: \(acceleration.y)")
-//            print("Z: \(acceleration.z)")
-//            print("---------------------")
+            self?.vibVec = SIMD3(acc.x, acc.y, acc.z) // 振動値を取得
         }
     }
     
     func stopDetecting() {
-        motionManager.stopAccelerometerUpdates()
-    }
-}
-
-struct ContentView: View {
-    @StateObject private var motionManager = MotionManager()
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            Text("振動値")
-                .font(.largeTitle)
-                .bold()
-            
-            HStack {
-                Text("X:")
-                    .frame(width: 30, alignment: .leading)
-                Text(String(format: "%.3f", motionManager.vibVec.x))
-                    .font(.system(.body, design: .monospaced))
-            }
-            
-            HStack {
-                Text("Y:")
-                    .frame(width: 30, alignment: .leading)
-                Text(String(format: "%.3f", motionManager.vibVec.y))
-                    .font(.system(.body, design: .monospaced))
-            }
-            
-            HStack {
-                Text("Z:")
-                    .frame(width: 30, alignment: .leading)
-                Text(String(format: "%.3f", motionManager.vibVec.z))
-                    .font(.system(.body, design: .monospaced))
-            }
-        }
-        .padding()
-        .onAppear {
-            motionManager.startDetecting()
-        }
-        .onDisappear {
-            motionManager.stopDetecting()
-        }
-        
-    }
-}
-
-@main
-struct ShakerApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+        motion.stopAccelerometerUpdates()
     }
 }
