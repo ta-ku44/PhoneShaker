@@ -2,10 +2,11 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var motionManager = MotionManager()
+    private let shaker = Shaker()
     
     var body: some View {
         VStack(spacing: 20) {
-            Text("振動値")
+            Text("加速度")
                 .font(.largeTitle)
                 .bold()
             
@@ -29,9 +30,17 @@ struct ContentView: View {
                 Text(String(format: "%.3f", motionManager.vibVec.z))
                     .font(.system(.body, design: .monospaced))
             }
+            
+            Button("Stop") {
+                motionManager.stopDetecting()
+            }
+            Button("Start") {
+                motionManager.startDetecting()
+            }
         }
         .padding()
         .onAppear {
+            motionManager.instrument = shaker
             motionManager.startDetecting()
         }
         .onDisappear {
