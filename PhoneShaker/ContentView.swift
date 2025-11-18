@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var motionManager = MotionManager()
-    private let shaker = Shaker()
+    @StateObject private var shaker = Shaker()
     
     var body: some View {
         VStack(spacing: 20) {
@@ -31,20 +31,31 @@ struct ContentView: View {
                     .font(.system(.body, design: .monospaced))
             }
             
-            Button("Stop") {
-                motionManager.stopDetecting()
+            VStack {
+                Text("Push: \(String(format: "%.1f", shaker.push))")
+                Slider(value: $shaker.push, in: 0...10, step: 0.1)
             }
-            Button("Start") {
+            
+            VStack {
+                Text("Pull: \(String(format: "%.1f", shaker.pull))")
+                Slider(value: $shaker.pull, in: 0...10, step: 0.1)
+                
+                Button("Stop") {
+                    motionManager.stopDetecting()
+                }
+                Button("Start") {
+                    motionManager.startDetecting()
+                }
+                
+            }
+            .padding()
+            .onAppear {
+                motionManager.instrument = shaker
                 motionManager.startDetecting()
             }
-        }
-        .padding()
-        .onAppear {
-            motionManager.instrument = shaker
-            motionManager.startDetecting()
-        }
-        .onDisappear {
-            motionManager.stopDetecting()
+            .onDisappear {
+                motionManager.stopDetecting()
+            }
         }
     }
 }

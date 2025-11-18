@@ -15,7 +15,7 @@ class MotionManager: ObservableObject {
             return
         }
         
-        motion.accelerometerUpdateInterval = 0.05
+        motion.accelerometerUpdateInterval = 0.1
         motion.startAccelerometerUpdates(to: .main) { [weak self] data, _ in
             guard let acc = data?.acceleration else { return }
             
