@@ -8,11 +8,11 @@ class Shaker: Instrument{
     
     func processInput(accel: SIMD3<Double>, time: TimeInterval){
         let power = accel.sum()
-        print(power)
-        if power > 10.25 {
+        print("振動パワー: \(power)")
+        if power > 1.25 {
             SoundManager.shared.playSound(named: "Shaker01-1(Single)")
-        } else if power > 0.75 {
-            SoundManager.shared.playSound(named: "Shaker01-1(Single)")
+        } else if power > 1 {
+            SoundManager.shared.playSound(named: "Shaker01-2(Single)")
         }
     }
 }
