@@ -32,13 +32,13 @@ struct ContentView: View {
             }
             
             VStack {
-                Text("Push: \(String(format: "%.1f", shaker.push))")
-                Slider(value: $shaker.push, in: 0...10, step: 0.1)
+                Text("activateAt: \(String(format: "%.1f", shaker.activateAt))")
+                Slider(value: $shaker.activateAt, in: 0...10, step: 0.1)
             }
             
             VStack {
-                Text("Pull: \(String(format: "%.1f", shaker.pull))")
-                Slider(value: $shaker.pull, in: 0...10, step: 0.1)
+                Text("impactDrop: \(String(format: "%.1f", shaker.impactDrop))")
+                Slider(value: $shaker.impactDrop, in: 0...10, step: 0.1)
                 
                 Button("Stop") {
                     motionManager.stopDetecting()

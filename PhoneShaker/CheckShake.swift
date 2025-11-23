@@ -15,12 +15,12 @@ class MotionManager: ObservableObject {
             return
         }
         
-        motion.accelerometerUpdateInterval = 0.1
+        motion.accelerometerUpdateInterval = 0.01
         motion.startAccelerometerUpdates(to: .main) { [weak self] data, _ in
             guard let acc = data?.acceleration else { return }
             
             self?.vibVec = SIMD3(acc.x, acc.y, acc.z)
-            self?.instrument?.processInput(accel: self!.vibVec, time: data!.timestamp)
+            self?.instrument?.processInput(accel: self!.vibVec)
         }
     }
     
